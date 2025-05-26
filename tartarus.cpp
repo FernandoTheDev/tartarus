@@ -4,6 +4,10 @@
 #include <fstream>
 #include <filesystem>
 
+// TODO: add brazllian lang or potugessue if a flag if passes eg | Ok
+// #define Lang 1 <- Eng
+// #define Lang 2 <- portugese
+
 int main(int argc, char **argv)
 {
     if (argc == 1)
@@ -24,4 +28,4 @@ int main(int argc, char **argv)
         exit(1);
     }
     return 0;
-} // I'm going to sleep soon (it's almost 10pm), I'll upload everything to github and you can do it locally
+} // I'm going to sleep soon (it's almost 10pm), I'll upload everything to github and you can do it locally i actually have to go too  lol just doing this one thing
