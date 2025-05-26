@@ -1,0 +1,7 @@
+{
+    "Compiler": "clang++",
+    "Name": "tartarus",
+    "Files": "Grab",
+    "Type": ".cpp",
+    "Ignore": []
+}
