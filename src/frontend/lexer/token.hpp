@@ -1,8 +1,6 @@
-#ifndef TOKEN_HPP
-#define TOKEN_HPP
+#pragma once 
 
 #include <string>
-
 enum class TokenKind
 {
     // _section, ...
@@ -18,7 +16,16 @@ enum class TokenKind
     STRING,
 
     // 0..9
-    INT
+    INT,
+    
+    COMMENT,
+    COMMA, 
+    SECTION,
+    XOR, 
+    MOV, 
+    GLOBAL, 
+    LABLE,
+    SYSCALL,
 };
 
 // Tokens
@@ -38,4 +45,4 @@ struct Token
         u_int64_t End);
 };
 
-#endif
+void print_token(Token& tk);

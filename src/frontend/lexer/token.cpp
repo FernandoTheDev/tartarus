@@ -1,4 +1,6 @@
 #include "./token.hpp"
+#include <cstdint>
+#include <iostream>
 
 Token::Token(
     TokenKind t_kind,
@@ -12,4 +14,8 @@ Token::Token(
     this->Line = Line;
     this->Start = Start;
     this->End = End;
+}
+
+void print_token(Token& tk){
+    std::cout << "{\"Kind\" : " << static_cast<uint64_t>(tk.t_kind) << ", \"Raw\" : \"" << tk.t_raw << "\", \"Line\" : " << tk.Line << ", \"Start\" : " << tk.Start << ", \"End\" : " << tk.End << "}\n";
 }
