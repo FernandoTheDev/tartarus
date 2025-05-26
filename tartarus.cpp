@@ -15,7 +15,6 @@ int main(int argc, char **argv)
     std::ifstream File(argv[1]);
     if (!File.is_open())
     {
-
         std::cerr << BrightWhite << "tartarus:" << BrightRed << " fatal error: " << Reset << "'" << argv[1] << "' no such file or directory\n";
         exit(1);
     }
