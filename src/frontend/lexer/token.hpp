@@ -1,35 +1,24 @@
-#pragma once 
+#pragma once
 
 #include <string>
 enum class TokenKind
 {
-    // _section, ...
-    ID,
-
-    // mov, ...
-    OP,
-
-    // rdi, rxi, ...
-    REG,
-
-    // "Hi"
-    STRING,
-
-    // 0..9
-    INT,
-    
-    COMMENT,
-    COMMA, 
-    SECTION,
-    XOR, 
-    MOV, 
-    GLOBAL, 
-    LABLE,
-    SYSCALL,
+    STRING,   // 0
+    INT,      // 1
+    COMMENT,  // 2
+    COMMA,    // 3
+    SECTION,  // 4
+    XOR,      // 5
+    MOV,      // 6
+    GLOBAL,   // 7
+    LABEL,    // 8
+    SYSCALL,  // 9
+    ID,       // 10
+    REG,      // 11
+    DIRECTIVE // 12
 };
 
-// Tokens
-// std::vector<Token>
+// Tokens: std::vector<Token>
 struct Token
 {
     TokenKind t_kind;
@@ -45,4 +34,4 @@ struct Token
         u_int64_t End);
 };
 
-void print_token(Token& tk);
+void print_token(Token &tk);

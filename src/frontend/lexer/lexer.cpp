@@ -13,111 +13,121 @@ std::vector<Token> lexer_tokenize(std::string &source)
     u_int64_t offset = 0;
     u_int64_t line = 1;
     u_int64_t col = 1;
-    bool err = false; 
+    bool err = false;
     while (offset < source.size())
     {
         switch (source[offset])
         {
-            case '\n':
-                line++;
-                offset++;
-                col = 1;
-                break; //  doesn't break the while?
-            case ' ':
-            case '\t':
+        case '\n':
+            line++;
+            offset++;
+            col = 1;
+            break;
+        case ' ':
+        case '\t':
+            col++;
+            offset++;
+            break;
+        case ',':
+            tokens.push_back(Token(TokenKind::COMMA, ",", line, col, col));
+            col++;
+            offset++;
+            break;
+        case ';':
+        {
+            uint64_t start = col;
+            std::string buffer;
+            while (source[offset] != '\n' && source.length() > offset)
+            {
+                buffer += source[offset];
                 col++;
                 offset++;
-                break;
-            case ',':
-                tokens.push_back(Token(TokenKind::COMMA, ",", line, col, col));
-                col++;
-                offset++;
-                break;
-            case ';':{
-                uint64_t start = col;
-                std::string buffer;
-                while(source[offset] != '\n' && source.length() > offset){
-                    buffer+=source[offset];
-                    col++;
-                    offset++;
-                }
-                tokens.push_back(Token(TokenKind::COMMENT, buffer, line, start, col));
-                break;
-            }//note when using cases if a varible is devlared inside of them add {}
-            default:
-                if (isalpha(source[offset]) || source[offset] == '_' || source[offset] == '.')
-                {
-                    std::string buffer;
-                    u_int64_t start = col;
-                    while (isalnum(source[offset]) || source[offset] == '_' || source[offset] == '.' && offset < source.size())
-                    {
-                        buffer += source[offset]; // this is good?
-                        offset++;
-                        col++;
-                    }
-
-                    std::unordered_map<std::string, TokenKind> Als = {
-                        //64 bit
-                        {"rdi", TokenKind::REG}, 
-                        {"rax", TokenKind::REG}, 
-
-                        //32 bit 
-                        {"edi", TokenKind::REG}, 
-                        {"eax", TokenKind::REG}, 
-                        //16 bit 
-                        {"di", TokenKind::REG}, 
-                        {"ax", TokenKind::REG}, 
-
-                        //8 bit
-                        {"dil", TokenKind::REG}, 
-                        {"al", TokenKind::REG}, 
-                
-                        {"section", TokenKind::SECTION},
-                        {"xor", TokenKind::XOR},
-
-                        {"syscall", TokenKind::SYSCALL},
-                        {"mov", TokenKind::MOV},
-
-                        {"global", TokenKind::GLOBAL}
-                    };
-                    if(Als.find(buffer) != Als.end()){
-                        tokens.push_back(Token(Als[buffer], buffer, line, start, col)); // ok? is good?
-                    }else if(source[offset] == ':'){
-                        col++; offset++;
-                        tokens.push_back(Token(TokenKind::LABLE, buffer + ":", line, start, col)); // ok? is good?
-                    }else{
-                        tokens.push_back(Token(TokenKind::ID, buffer, line, start, col)); // ok? is good?
-                    }
-                }else if(isdigit(source[offset])){
-                    std::string buffer;
-                    u_int64_t start = col;
-                    while (isdigit(source[offset]) && offset < source.size())
-                    {
-                        buffer += source[offset]; // this is good?
-                        offset++;
-                        col++;
-                    }
-                    tokens.push_back(Token(TokenKind::INT, buffer, line, start, col));
-                }
-                else{
-                    //TODO: Handle Error
-                    std::cerr << line << ": Unknow Token '" << source[offset] << "'\n";
-                    offset++;
-                    col++;
-                    err = true;
-                }
-                break;
             }
+            tokens.push_back(Token(TokenKind::COMMENT, buffer, line, start, col));
+            break;
+        } // note when using cases if a varible is devlared inside of them add {}
+        default:
+            if (isalpha(source[offset]) || source[offset] == '_' || source[offset] == '.')
+            {
+                std::string buffer;
+                u_int64_t start = col;
+                while (isalnum(source[offset]) || source[offset] == '_' || source[offset] == '.' && offset < source.size())
+                {
+                    buffer += source[offset];
+                    offset++;
+                    col++;
+                }
+
+                // std::cout << "Logs. Buffer: " << buffer << "\n";
+
+                std::unordered_map<std::string, TokenKind> Als = {
+                    // 64 bit
+                    {"rdi", TokenKind::REG},
+                    {"rax", TokenKind::REG},
+
+                    // 32 bit
+                    {"edi", TokenKind::REG},
+                    {"eax", TokenKind::REG},
+                    // 16 bit
+                    {"di", TokenKind::REG},
+                    {"ax", TokenKind::REG},
+
+                    // 8 bit
+                    {"dil", TokenKind::REG},
+                    {"al", TokenKind::REG},
+
+                    {"section", TokenKind::SECTION},
+                    {"xor", TokenKind::XOR},
+
+                    {"syscall", TokenKind::SYSCALL},
+                    {"mov", TokenKind::MOV},
+
+                    {"global", TokenKind::GLOBAL}};
+                if (Als.find(buffer) != Als.end())
+                {
+                    tokens.push_back(Token(Als[buffer], buffer, line, start, col));
+                }
+                else if (source[offset] == ':')
+                {
+                    col++;
+                    offset++;
+                    tokens.push_back(Token(TokenKind::LABEL, buffer + ":", line, start, col));
+                }
+                else if (buffer[0] == '.')
+                {
+                    tokens.push_back(Token(TokenKind::DIRECTIVE, buffer, line, start, col));
+                }
+                else
+                {
+                    tokens.push_back(Token(TokenKind::ID, buffer, line, start, col));
+                }
+            }
+            else if (isdigit(source[offset]))
+            {
+                std::string buffer;
+                u_int64_t start = col;
+                while (isdigit(source[offset]) && offset < source.size())
+                {
+                    buffer += source[offset];
+                    offset++;
+                    col++;
+                }
+                tokens.push_back(Token(TokenKind::INT, buffer, line, start, col));
+            }
+            else
+            {
+                // TODO: Handle Error
+                std::cerr << line << ": Unknow Token '" << source[offset] << "'\n";
+                offset++;
+                col++;
+                err = true;
+            }
+            break;
+        }
     }
-    if(err == true){
+    if (err == true)
+    {
         exit(1);
     }
     return tokens;
 }
-
-// save file!
-//  use Tokens.emplace()
-//  for what? so we dont have to use a constructor or function we just pass in th args | Ok (never used)
-//? save the file | done hmm look at the terminal though
-//  how many mistakes
-//  why?

@@ -1,0 +1,6 @@
+{
+    "./src/frontend/lexer/lexer.cpp": 1748255888.6918294,
+    "./src/frontend/lexer/token.cpp": 1748253190.1229405,
+    "./src/codegen/codegen.cpp": 1748256634.1902485,
+    "./tartarus.cpp": 1748254257.8251078
+}
